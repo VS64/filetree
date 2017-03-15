@@ -1,0 +1,7 @@
+filetree:
+  version: VERSION
+  js:
+    assets/js/filetree.js: {}
+  css:
+    component:
+      assets/css/filetree.css: {}

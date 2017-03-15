@@ -1,0 +1,5 @@
+name: 'File Tree'
+description: 'Renders an interactive list from a folder of files.'
+type: module
+package: Input filters
+core: 8.x

@@ -1,0 +1,123 @@
+<?php
+/**
+ * @file
+ * Filetree functions.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ */
+function filetree_theme() {
+  return [
+    'filetree' => [
+      'variables' => [
+        'files' => [],
+        'params' => [],
+      ],
+    ]
+  ];
+}
+
+/**
+ * Recursively list folders and files in this directory.
+ * Similar to file_scan_directory(), except that we need the hierarchy.
+ * Returns a sorted list which is compatible with theme('item_list') or
+ * theme('filetree'), folders first, then files.
+ *
+ * @param $dir
+ * @param $params
+ * @param string $sortorder
+ * @return array
+ */
+function filetree_list_files($dir, $params, $sortorder='asc') {
+  $list = [];
+
+  if (is_dir($dir) && $handle = opendir($dir)) {
+    $folders = $files = [];
+    while (FALSE !== ($file = readdir($handle))) {
+      if (!in_array($file, ['.', '..', 'CVS']) && $file[0] != '.') {
+        if (is_dir("$dir/$file")) {
+          $folders[$file] = [
+            '#markup' => $file,
+            'children' => filetree_list_files("$dir/$file", $params),
+            '#wrapper_attributes' => ['class' => 'folder'],
+          ];
+        }
+        else {
+          $filename = "$dir/$file";
+          $pathinfo = pathinfo($file);
+          // Sometimes a file do not have any extension, like README files.
+          if (!isset($pathinfo['extension'])) {
+            $pathinfo['extension'] = '';
+          }
+          if ($params['url'] == '') {
+            $name = $params['extensions'] ? $pathinfo['basename'] : substr($pathinfo['basename'], 0, strrpos($pathinfo['basename'], '.'));
+            $url = file_create_url($filename);
+            if ($params['absolute']) {
+              $url_object = URL::fromUri($url, $options = ['absolute' => TRUE]);
+            }
+            else {
+              $url_object = URL::fromUri($url, $options = ['absolute' => FALSE]);
+            }
+            $files[$file] = [
+              '#markup' => \Drupal::l($name, $url_object),
+              '#wrapper_attributes' => ['class' => filetree_icon($pathinfo['extension'])],
+            ];
+          }
+        }
+      }
+    }
+    closedir($handle);
+    asort($folders);
+    asort($files);
+    if ($sortorder == 'desc') {
+      $folders = array_reverse($folders, true);
+      $files = array_reverse($files, true);
+    }
+    $list += $folders;
+    $list += $files;
+  }
+
+  return $list;
+}
+
+/**
+ * Determines which icon should be displayed, based on file extension.
+ *
+ * @param $extension
+ * @return int|string
+ */
+function filetree_icon($extension) {
+  $extension = strtolower($extension);
+  $icon = 'file';
+  $map = [
+    'application' => ['exe'],
+    'css' => ['css'],
+    'db' => ['sql'],
+    'doc' => ['doc', 'docx', 'odt'],
+    'film' => ['avi', 'mov', 'mpeg', 'mp4', 'webm'],
+    'flash' => ['flv', 'swf'],
+    'html' => ['htm', 'html', 'twig'],
+    'music' => ['mp3', 'aac', 'ogg', 'flac', 'wav'],
+    'pdf' => ['pdf', 'djvu'],
+    'php' => ['php'],
+    'image' => ['jpg', 'jpeg', 'gif', 'png', 'bmp'],
+    'ppt' => ['ppt'],
+    'psd' => ['psd', 'ai', 'xcf', 'sketch'],
+    'script' => ['asp', 'sh'],
+    'txt' => ['txt'],
+    'xls' => ['xls', 'xlsx', 'ods'],
+    'zip' => ['zip', 'rar', '7z', 'gz', 'bz2'],
+  ];
+  foreach ($map as $key => $values) {
+    foreach ($values as $value) {
+      if ($extension == $value) {
+        $icon = $key;
+      }
+    }
+  }
+
+  return $icon;
+}
