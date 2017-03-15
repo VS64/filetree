@@ -37,7 +37,7 @@ function filetree_list_files($dir, $params, $sortorder='asc') {
   if (is_dir($dir) && $handle = opendir($dir)) {
     $folders = $files = [];
     while (FALSE !== ($file = readdir($handle))) {
-      if (!in_array($file, ['.', '..', 'CVS']) && $file[0] != '.') {
+      if (!in_array($file, ['.', '..', 'CVS', 'Thumbs.db']) && $file[0] != '.') {
         if (is_dir("$dir/$file")) {
           $folders[$file] = [
             '#markup' => $file,
@@ -70,17 +70,37 @@ function filetree_list_files($dir, $params, $sortorder='asc') {
       }
     }
     closedir($handle);
+
     asort($folders);
     asort($files);
     if ($sortorder == 'desc') {
-      $folders = array_reverse($folders, true);
-      $files = array_reverse($files, true);
+      filetree_sorting($folders, SORT_DESC);
+      filetree_sorting($files, SORT_DESC);
     }
     $list += $folders;
     $list += $files;
   }
 
   return $list;
+}
+
+/**
+ * Recursive sorting files and folders in descending order.
+ *
+ * @param $array
+ * @param $sort
+ * @return bool
+ */
+function filetree_sorting(&$array, $sort) {
+  foreach ($array as &$value) {
+    if (is_array($value)) {
+      if (isset($value['children'])) {
+        filetree_sorting($value['children'], $sort);
+      }
+    }
+  }
+
+  return array_multisort($array, $sort);
 }
 
 /**
