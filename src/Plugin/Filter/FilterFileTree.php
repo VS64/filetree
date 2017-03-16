@@ -121,6 +121,10 @@ class FilterFileTree extends FilterBase {
         }
       }
 
+      if ($params[$key]['private'] && $params[$key]['dir']) {
+        $params[$key]['dir'] = 'private/' . $params[$key]['dir'];
+      }
+
       // Make sure that "dir" was provided,
       if (!$params[$key]['dir']
         // ...it's an allowed path for this input format,
