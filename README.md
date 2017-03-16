@@ -38,3 +38,9 @@ When enabled, folders will expand and collapse with a fast animation. Set to fal
 When set to `desc`, files sort in reverse order. `asc` by default.
 
 `Example: [filetree dir="some-directory" sortorder="desc"]`
+
+### private
+
+When set to `true`, files from private folders can be accessed. `false` by default.
+
+`Example: [filetree dir="private/some-directory" private="true"]`
