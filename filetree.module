@@ -55,8 +55,12 @@ function filetree_list_files($dir, $params, $sortorder='asc') {
           if ($params['url'] == '') {
             $name = $params['extensions'] ? $pathinfo['basename'] : substr($pathinfo['basename'], 0, strrpos($pathinfo['basename'], '.'));
             $url = file_create_url($filename);
-            if ($params['absolute']) {
-              $url_object = URL::fromUri($url, $options = ['absolute' => TRUE]);
+            if ($params['private']) {
+              $url = str_replace('sites/default/files/private', 'system/files', $url);
+              $url_object = URL::fromUri($url);
+            }
+            elseif ($params['absolute']) {
+               $url_object = URL::fromUri($url, $options = ['absolute' => TRUE]);
             }
             else {
               $url_object = URL::fromUri($url, $options = ['absolute' => FALSE]);

@@ -95,6 +95,7 @@ class FilterFileTree extends FilterBase {
       'url' => '',
       'animation' => TRUE,
       'sortorder' => 'asc',
+      'private' => FALSE,
     ];
     $matches2 = [];
 
@@ -118,6 +119,10 @@ class FilterFileTree extends FilterBase {
             $params[$key][$param_name] = $matches2[$key][2][$param_key];
           }
         }
+      }
+
+      if ($params[$key]['private'] && $params[$key]['dir']) {
+        $params[$key]['dir'] = 'private/' . $params[$key]['dir'];
       }
 
       // Make sure that "dir" was provided,
@@ -170,7 +175,7 @@ class FilterFileTree extends FilterBase {
     $output = t('You may use [filetree dir="some-directory"] to display a list of files inline.');
     if ($long) {
       $output = '<p>' . $output . '</p>';
-      $output .= '<p>' . t('Additional options include "multi", "controls", "extensions", "sortorder", and "absolute"; for example, [filetree dir="some-directory" multi="false" controls="false" extensions="false" sortorder="desc" absolute="false"].') . '</p>';
+      $output .= '<p>' . t('Additional options include "multi", "controls", "extensions", "sortorder", and "absolute"; for example, [filetree dir="some-directory" multi="false" controls="false" extensions="false" sortorder="desc" absolute="false" private="true"].') . '</p>';
     }
     return $output;
   }
