@@ -1,5 +1,10 @@
 {
     "name": "vs64/filetree",
+    "type": "drupal-module",
     "description": "Drupal 8 filetree module",
-    "require": {}
+    "license": "MIT",
+    "require": {
+        "drupal/core": "^8"
+    }
+
 }
