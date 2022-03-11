@@ -187,7 +187,7 @@ class FilterFileTree extends FilterBase {
    * @param $params
    * @return string
    */
-  protected function render($files, $params) {
+  public static function render($files, $params) {
     $output = '';
 
     // Render controls (but only if multiple folders is enabled, and only if
