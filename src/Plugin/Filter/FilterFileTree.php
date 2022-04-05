@@ -190,6 +190,14 @@ class FilterFileTree extends FilterBase {
   public static function render($files, $params) {
     $output = '';
 
+    // Render files.
+    $render = [
+      '#theme' => 'item_list',
+      '#items' => $files,
+      '#type' => 'ul',
+      '#attributes' => ['class' => 'files'],
+    ];
+
     // Render controls (but only if multiple folders is enabled, and only if
     // there is at least one folder to expand/collapse).
     if ($params['multi'] and $params['controls']) {
@@ -210,13 +218,6 @@ class FilterFileTree extends FilterBase {
       }
     }
 
-    // Render files.
-    $render = [
-      '#theme' => 'item_list',
-      '#items' => $files,
-      '#type' => 'ul',
-      '#attributes' => ['class' => 'files'],
-    ];
     $output .= render($render);
 
     // Generate classes and unique ID for wrapper div.

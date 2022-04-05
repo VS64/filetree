@@ -43,7 +43,7 @@ function filetree_list_files($dir, $params, $sortorder='asc') {
           $folders[$file] = [
             '#markup' => $file,
             'children' => filetree_list_files("$dir/$file", $params),
-            '#wrapper_attributes' => ['class' => 'folder'],
+            '#wrapper_attributes' => ['class' => 'folder']
           ];
         }
         else {
@@ -65,7 +65,8 @@ function filetree_list_files($dir, $params, $sortorder='asc') {
           }
           $files[$file] = [
             '#markup' => \Drupal::l($name, $url_object),
-            '#wrapper_attributes' => ['class' => filetree_icon($pathinfo['extension'])],
+            '#attributes' => ['download' => $file],
+            '#wrapper_attributes' => ['class' => filetree_icon($pathinfo['extension'])]
           ];
         }
       }

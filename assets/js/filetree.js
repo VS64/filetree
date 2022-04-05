@@ -40,7 +40,7 @@
       });
 
       // Click on file links. Overrides click on expanded folder area.
-      $('.filetree .item-list li a').click(function(event) {
+      $('.filetree .folder li a').click(function(event) {
         event.preventDefault();
         window.open($(this).attr('href'), '_blank');
       });
