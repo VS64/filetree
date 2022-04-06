@@ -4,6 +4,7 @@
  * Filetree functions.
  */
 
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Site\Settings;
 
@@ -47,7 +48,6 @@ function filetree_list_files($dir, $params, $sortorder='asc') {
           ];
         }
         else {
-          $filename = "$dir/$file";
           $pathinfo = pathinfo($file);
           // Sometimes a file do not have any extension, like README files.
           if (!isset($pathinfo['extension'])) {
@@ -58,14 +58,16 @@ function filetree_list_files($dir, $params, $sortorder='asc') {
             if (!is_callable($params['url'])) {
               throw "'url' params must be a function returning a valid URL object.";
             }
-            $url_object = URL::fromUri($params['url']($filename));
+            $url_object = $params['url']($dir, $file);
           }
           else {
-            $url_object = URL::fromUri(file_create_url($filename), ['absolute' => !!$params['absolute']]);
+            $url_object = URL::fromUri(file_create_url("$dir/$file"), [
+              'absolute' => !!$params['absolute'],
+              'attributes' => ['download' => $file]
+            ]);
           }
           $files[$file] = [
-            '#markup' => \Drupal::l($name, $url_object),
-            '#attributes' => ['download' => $file],
+            '#markup' => Link::fromTextAndUrl($name, $url_object)->toString(),
             '#wrapper_attributes' => ['class' => filetree_icon($pathinfo['extension'])]
           ];
         }
@@ -85,6 +87,7 @@ function filetree_list_files($dir, $params, $sortorder='asc') {
 
   return $list;
 }
+
 
 /**
  * Recursive sorting files and folders in descending order.
